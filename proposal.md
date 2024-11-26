@@ -1,13 +1,14 @@
-# Project Descripion
+# Project Description
 
-Explain what you're gonna do here
+I am going to make a Tetris game
 
 ## Needs to have list
 
-- thing one
-- thing two
+- background music
+- Sound affects
 
 ## Nice to have list 
 
-- other thing
-- some other thing
+- Play against other people with p5party
+- Tetris blocks for both players randomize in the same order
+- Be able to see the opponent's game in real time
