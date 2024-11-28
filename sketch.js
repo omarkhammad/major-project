@@ -33,13 +33,13 @@ function setup() {
 
 
 function draw() {
-  for (let arr of tetrisArray) {
-    for (let newTetris of arr) {
-      newTetris.display();
-    }
-  }
+  // for (let arr of tetrisArray) {
+  //   for (let newTetris of arr) {
+  //     newTetris.display();
+  //   }
+  // }
 
-  // allTetris(display);
+  allTetris(display);
 }
 
 
