@@ -6,6 +6,9 @@ let tetrisArray = [];
 let squareSize;
 let xSquarePadding;
 let ySquarePadding;
+let fallingBlocks = [];
+let tetrisColorPallet = ["grey", "red"];
+
 
 class Tetris {
   constructor(row, col) {
@@ -14,12 +17,15 @@ class Tetris {
     this.state = 0;
   }
 
+
   setCoordinates() {
     this.x = this.col * squareSize + xSquarePadding;
     this.y = this.row * squareSize;
   }
 
+
   display() {
+    fill(tetrisColorPallet[this.state]);
     square(this.x + xSquarePadding, this.y + ySquarePadding, squareSize);
   }
 }
@@ -29,17 +35,18 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   createEmptySquareGrid();
   setSquareSize();
+  newBlock();
 }
 
 
 function draw() {
-  // for (let arr of tetrisArray) {
-  //   for (let newTetris of arr) {
-  //     newTetris.display();
-  //   }
-  // }
+  for (let arr of tetrisArray) {
+    for (let newTetris of arr) {
+      newTetris.display();
+    }
+  }
 
-  allTetris(display);
+  // Tetris => Tetris.display();
 }
 
 
@@ -52,7 +59,7 @@ function setSquareSize() {
   }
   xSquarePadding = (width - NUMBER_OF_COLUMNS * squareSize) / 4;
   
-  ySquarePadding = (height - NUMBER_OF_ROWS * squareSize) / 4;
+  ySquarePadding = (height - NUMBER_OF_ROWS * squareSize) / 2;
   
   for (let arr of tetrisArray) {
     for (let newTetris of arr) {
@@ -78,5 +85,12 @@ function allTetris(func) {
     for (let newTetris of arr) {
       newTetris.func();
     }
+  }
+}
+
+function newBlock() {
+  fallingBlocks = [[0, 4], [0, 5], [1, 4], [1, 5]];
+  for (let fallingBlock of fallingBlocks) {
+    tetrisArray[fallingBlock[1], fallingBlock[0]].state = 1;
   }
 }
