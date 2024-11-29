@@ -4,7 +4,14 @@ I am going to make a Tetris game
 
 ## Needs to have list
 
-- background music
+- Score system
+- If a whole row is full of blocks, it clears the row
+- Falling blocks can be swapped
+- Shapes can be rotated, moved left right, and down
+- Random block generation
+- Falling blocks show an outline on where they are projected to fall
+- Difficulty increases over time by speeding up falling of blocks
+- Background music
 - Sound affects
 
 ## Nice to have list 

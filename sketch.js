@@ -15,6 +15,7 @@ class Tetris {
     this.row = row;
     this.col = col;
     this.state = 0;
+    this.projection = false;
   }
 
 
@@ -88,9 +89,11 @@ function allTetris(func) {
   }
 }
 
+
 function newBlock() {
+  let fallingBlockColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
   fallingBlocks = [[0, 4], [0, 5], [1, 4], [1, 5]];
   for (let fallingBlock of fallingBlocks) {
-    tetrisArray[fallingBlock[1], fallingBlock[0]].state = 1;
+    tetrisArray[fallingBlock[0]][fallingBlock[1]].state = fallingBlockColor;
   }
 }
