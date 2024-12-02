@@ -15,7 +15,7 @@ class Tetris {
     this.row = row;
     this.col = col;
     this.state = 0;
-    this.projection = false;
+    this.shadow = false;
   }
 
 
@@ -95,5 +95,19 @@ function newBlock() {
   fallingBlocks = [[0, 4], [0, 5], [1, 4], [1, 5]];
   for (let fallingBlock of fallingBlocks) {
     tetrisArray[fallingBlock[0]][fallingBlock[1]].state = fallingBlockColor;
+  }
+}
+
+
+function findShadow() {
+  let dropBy = 0;
+  let clear = true;
+  while(clear && dropBy < 18) {
+    dropBy = 1;
+    for (let block of fallingBlocks) {
+      if (tetrisArray[block[1]][block[0]].state !== 0) {
+        clear = false;
+      }
+    }
   }
 }
