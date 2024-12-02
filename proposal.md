@@ -9,7 +9,6 @@ I am going to make a Tetris game
 - If a whole row is full of blocks, it clears the row
 - Shapes can be rotated, moved left right, and down
 - Random block generation
-- Falling blocks show an outline on where they are projected to fall
 - Difficulty increases over time by speeding up falling of blocks
 - Background music
 - Sound affects
@@ -18,3 +17,4 @@ I am going to make a Tetris game
 
 - A sidebar that shows your future blocks
 - Falling blocks can be swapped out
+- Falling blocks show an outline on where they are projected to fall

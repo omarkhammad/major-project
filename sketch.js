@@ -1,5 +1,6 @@
 // [name] Tetris
 
+let fallingBlockColor;
 const NUMBER_OF_ROWS = 20;
 const NUMBER_OF_COLUMNS = 10;
 let tetrisArray = [];
@@ -7,7 +8,7 @@ let squareSize;
 let xSquarePadding;
 let ySquarePadding;
 let fallingBlocks = [];
-let tetrisColorPallet = ["grey", "red"];
+let tetrisColorPallet = ["grey", "red", "blue", "green"];
 
 
 class Tetris {
@@ -37,6 +38,7 @@ function setup() {
   createEmptySquareGrid();
   setSquareSize();
   newBlock();
+  findShadow();
 }
 
 
@@ -46,7 +48,6 @@ function draw() {
       newTetris.display();
     }
   }
-
   // Tetris => Tetris.display();
 }
 
@@ -91,7 +92,7 @@ function allTetris(func) {
 
 
 function newBlock() {
-  let fallingBlockColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
+  fallingBlockColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
   fallingBlocks = [[0, 4], [0, 5], [1, 4], [1, 5]];
   for (let fallingBlock of fallingBlocks) {
     tetrisArray[fallingBlock[0]][fallingBlock[1]].state = fallingBlockColor;
@@ -100,14 +101,21 @@ function newBlock() {
 
 
 function findShadow() {
-  let dropBy = 0;
+  let dropBy = 2;
   let clear = true;
   while(clear && dropBy < 18) {
-    dropBy = 1;
+    dropBy++;
     for (let block of fallingBlocks) {
-      if (tetrisArray[block[1]][block[0]].state !== 0) {
+      if (tetrisArray[block[0] + dropBy][block[1]].state !== 0) {
         clear = false;
       }
     }
+  }
+
+  dropBy--;
+  
+  for (let block of fallingBlocks) {
+    tetrisArray[block[0] + dropBy][block[1]].state = fallingBlockColor;
+    tetrisArray[block[0] + dropBy][block[1]].shadow = true;
   }
 }
