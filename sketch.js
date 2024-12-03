@@ -6,8 +6,19 @@ let tetrisArray = [];
 let squareSize;
 let xSquarePadding;
 let ySquarePadding;
-let fallingBlocks = [];
+let currentFallingTetris;
+let randomFallingTetris;
+let fallingTetrisCoordinate;
+let fallingTetrisColor;
 let tetrisColorPallet = ["grey", "red"];
+let allFallingBlocks = 
+[[[0, 0], [0, 1], [1, 0], [1, 1]],     // Square
+  [[-1, 0], [0, 0], [1, 0], [2, 0]],   // Line
+  [[-1, 0], [0, 0], [0, 1], [1, 1]],   // Z
+  [[-1, 1], [0, 0], [0, 1], [1, 0]],   // S
+  [[-1, 1], [0, 0], [0, 1], [1, 1]],   // T
+  [[1, 0], [-1, 1], [0, 1], [1, 1]],   // L
+  [[-1, 0], [-1, 1], [0, 1], [1, 1]]]; // Reverse L
 
 
 class Tetris {
@@ -91,9 +102,23 @@ function allTetris(func) {
 
 
 function newBlock() {
-  let fallingBlockColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
-  fallingBlocks = [[0, 4], [0, 5], [1, 4], [1, 5]];
-  for (let fallingBlock of fallingBlocks) {
-    tetrisArray[fallingBlock[0]][fallingBlock[1]].state = fallingBlockColor;
+  fallingTetrisColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
+  randomFallingTetris = allFallingBlocks[Math.floor(Math.random() * allFallingBlocks.length)];
+  currentFallingTetris = [];
+  fallingTetrisCoordinate = [4, 0];
+
+  for (let block of randomFallingTetris) {
+    currentFallingTetris.push([block[0] + fallingTetrisCoordinate[0], block[1] + fallingTetrisCoordinate[1]]);
+    tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].state = fallingTetrisColor;
+  }
+
+}
+
+function keyPressed() {
+  if (key === "LEFT_ARROW") {
+    
+  }
+  if (key === "RIGHT_ARROW") {
+    
   }
 }
