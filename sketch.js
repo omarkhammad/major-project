@@ -1,5 +1,6 @@
 // [name] Tetris
 
+let fallingBlockColor;
 const NUMBER_OF_ROWS = 20;
 const NUMBER_OF_COLUMNS = 10;
 let tetrisArray = [];
@@ -10,7 +11,6 @@ let currentFallingTetris;
 let randomFallingTetris;
 let fallingTetrisCoordinate;
 let fallingTetrisColor;
-let tetrisColorPallet = ["grey", "red"];
 let allFallingBlocks = 
 [[[0, 0], [0, 1], [1, 0], [1, 1]],     // Square
   [[-1, 0], [0, 0], [1, 0], [2, 0]],   // Line
@@ -19,6 +19,8 @@ let allFallingBlocks =
   [[-1, 1], [0, 0], [0, 1], [1, 1]],   // T
   [[1, 0], [-1, 1], [0, 1], [1, 1]],   // L
   [[-1, 0], [-1, 1], [0, 1], [1, 1]]]; // Reverse L
+let fallingBlocks = [];
+let tetrisColorPallet = ["grey", "red", "blue", "green"];
 
 
 class Tetris {
@@ -26,7 +28,7 @@ class Tetris {
     this.row = row;
     this.col = col;
     this.state = 0;
-    this.projection = false;
+    this.shadow = false;
   }
 
 
@@ -48,6 +50,7 @@ function setup() {
   createEmptySquareGrid();
   setSquareSize();
   newBlock();
+  findShadow();
 }
 
 
@@ -57,7 +60,6 @@ function draw() {
       newTetris.display();
     }
   }
-
   // Tetris => Tetris.display();
 }
 
@@ -120,5 +122,25 @@ function keyPressed() {
   }
   if (key === "RIGHT_ARROW") {
     
+  }
+}
+
+function findShadow() {
+  let dropBy = 2;
+  let clear = true;
+  while(clear && dropBy < 18) {
+    dropBy++;
+    for (let block of fallingBlocks) {
+      if (tetrisArray[block[0] + dropBy][block[1]].state !== 0) {
+        clear = false;
+      }
+    }
+  }
+
+  dropBy--;
+  
+  for (let block of fallingBlocks) {
+    tetrisArray[block[0] + dropBy][block[1]].state = fallingBlockColor;
+    tetrisArray[block[0] + dropBy][block[1]].shadow = true;
   }
 }
