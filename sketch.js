@@ -27,8 +27,9 @@ class Tetris {
   constructor(row, col) {
     this.row = row;
     this.col = col;
-    this.state = 0;
+    this.colorState = 0;
     this.shadow = false;
+    this.solid = false;
   }
 
 
@@ -39,7 +40,7 @@ class Tetris {
 
 
   display() {
-    fill(tetrisColorPallet[this.state]);
+    fill(tetrisColorPallet[this.colorState]);
     square(this.x + xSquarePadding, this.y + ySquarePadding, squareSize);
   }
 }
@@ -111,36 +112,67 @@ function newBlock() {
 
   for (let block of randomFallingTetris) {
     currentFallingTetris.push([block[0] + fallingTetrisCoordinate[0], block[1] + fallingTetrisCoordinate[1]]);
-    tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].state = fallingTetrisColor;
+    tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].colorState = fallingTetrisColor;
   }
 
 }
 
 function keyPressed() {
-  if (key === "LEFT_ARROW") {
-    
+  if (key === "ArrowLeft") {
+    moveHorizontally(-1);
   }
-  if (key === "RIGHT_ARROW") {
-    
+  if (key === "ArrowRight") {
+    moveHorizontally(1);
   }
 }
 
 function findShadow() {
-  let dropBy = 2;
-  let clear = true;
-  while(clear && dropBy < 18) {
+  let dropBy = 0;
+  let isClear = true;
+  while(isClear) {
     dropBy++;
-    for (let block of fallingBlocks) {
-      if (tetrisArray[block[0] + dropBy][block[1]].state !== 0) {
-        clear = false;
+    for (let block of currentFallingTetris) {
+      if (dropBy + block[1] + 1 > NUMBER_OF_ROWS || tetrisArray[block[1] + dropBy][block[0]].solid) {
+        isClear = false;
       }
     }
   }
 
   dropBy--;
   
-  for (let block of fallingBlocks) {
-    tetrisArray[block[0] + dropBy][block[1]].state = fallingBlockColor;
-    tetrisArray[block[0] + dropBy][block[1]].shadow = true;
+  for (let block of currentFallingTetris) {
+    tetrisArray[block[1] + dropBy][block[0]].colorState = fallingTetrisColor;
+    tetrisArray[block[1] + dropBy][block[0]].shadow = true;
+  }
+}
+
+
+function moveHorizontally(shift) {
+  let isClear = "true";
+  for (let block of currentFallingTetris) {
+    if (block [0] + shift + 1 > NUMBER_OF_COLUMNS || block[0] + shift < 0 || tetrisArray[block[1]][block[0] + shift].solid) {
+      isClear = false;
+    }
+  }
+
+  if (isClear) {
+    clearFallingTetris();
+
+    fallingTetrisCoordinate[0] += shift;
+    currentFallingTetris = [];
+      
+    for (let block of randomFallingTetris) {
+      currentFallingTetris.push([block[0] + fallingTetrisCoordinate[0], block[1] + fallingTetrisCoordinate[1]]);
+      tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].colorState = fallingTetrisColor;
+    }
+  
+    findShadow();
+  }
+}
+
+
+function clearFallingTetris() {
+  for (let block of currentFallingTetris) {
+    tetrisArray[block[1]][block[0]].colorState = 0;
   }
 }
