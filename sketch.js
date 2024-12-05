@@ -20,7 +20,8 @@ let allFallingBlocks =
   [[1, 0], [-1, 1], [0, 1], [1, 1]],   // L
   [[-1, 0], [-1, 1], [0, 1], [1, 1]]]; // Reverse L
 let fallingBlocks = [];
-let tetrisColorPallet = ["grey", "red", "blue", "green"];
+let shadowArray = [];
+let tetrisColorPallet;
 
 
 class Tetris {
@@ -47,6 +48,7 @@ class Tetris {
 
 
 function setup() {
+  tetrisColorPallet = [color("grey"), color("red"), color("blue"), color("green")];
   createCanvas(windowWidth, windowHeight);
   createEmptySquareGrid();
   setSquareSize();
@@ -143,7 +145,17 @@ function findShadow() {
   for (let block of currentFallingTetris) {
     tetrisArray[block[1] + dropBy][block[0]].colorState = fallingTetrisColor;
     tetrisArray[block[1] + dropBy][block[0]].shadow = true;
+    shadowArray.push(tetrisArray[block[1] + dropBy][block[0]]);
   }
+}
+
+
+function clearShadow() {
+  for (let block of shadowArray) {
+    block.colorState = 0;
+    block.shadow = false;
+  }
+  shadowArray = [];
 }
 
 
@@ -166,7 +178,9 @@ function moveHorizontally(shift) {
       tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].colorState = fallingTetrisColor;
     }
   
+    clearShadow();
     findShadow();
+    console.log(shadowArray);
   }
 }
 
