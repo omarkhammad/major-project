@@ -31,6 +31,7 @@ class Tetris {
     this.row = row;
     this.col = col;
     this.colorState = 0;
+    this.falling = false;
     this.shadow = false;
     this.solid = false;
   }
@@ -43,7 +44,7 @@ class Tetris {
 
 
   display() {
-    if (this.shadow) {
+    if (this.shadow && !this.falling) {
       fill(tetrisShadowColorPallet[this.colorState]);
     }
     else {
@@ -117,14 +118,9 @@ function allTetris(func) {
 function newBlock() {
   fallingTetrisColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
   randomFallingTetris = allFallingBlocks[Math.floor(Math.random() * allFallingBlocks.length)];
-  currentFallingTetris = [];
+
   fallingTetrisCoordinate = [4, 0];
-
-  for (let block of randomFallingTetris) {
-    currentFallingTetris.push([block[0] + fallingTetrisCoordinate[0], block[1] + fallingTetrisCoordinate[1]]);
-    tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].colorState = fallingTetrisColor;
-  }
-
+  findFallingBlocks();
 }
 
 function keyPressed() {
@@ -136,6 +132,9 @@ function keyPressed() {
   }
   if (key === "ArrowDown") {
     moveDown();
+  }
+  if (key === " ") {
+    moveAllTheWayDown();
   }
 }
 
@@ -179,23 +178,19 @@ function moveHorizontally(shift) {
   }
 
   if (isClear) {
+    clearShadow();
     clearFallingTetris();
 
     fallingTetrisCoordinate[0] += shift;
-    currentFallingTetris = [];
       
-    for (let block of randomFallingTetris) {
-      currentFallingTetris.push([block[0] + fallingTetrisCoordinate[0], block[1] + fallingTetrisCoordinate[1]]);
-      tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].colorState = fallingTetrisColor;
-    }
-  
-    clearShadow();
+    findFallingBlocks();
     findShadow();
   }
 }
 
 
 function moveDown() {
+  clearShadow();
   let isClear = "true";
   for (let block of currentFallingTetris) {
     if (block [1] + 2 > NUMBER_OF_ROWS || tetrisArray[block[1] + 1][block[0]].solid) {
@@ -207,12 +202,8 @@ function moveDown() {
     clearFallingTetris();
 
     fallingTetrisCoordinate[1]++;
-    currentFallingTetris = [];
       
-    for (let block of randomFallingTetris) {
-      currentFallingTetris.push([block[0] + fallingTetrisCoordinate[0], block[1] + fallingTetrisCoordinate[1]]);
-      tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].colorState = fallingTetrisColor;
-    }
+    findFallingBlocks();
   }
   else {
     for (let block of currentFallingTetris) {
@@ -223,15 +214,23 @@ function moveDown() {
     
     newBlock();
   }
-  
-  clearShadow();
   findShadow();
 }
+
+
+// function moveAllTheWayDown() {
+//   for (let block of currentFallingTetris) {
+//     tetrisArray[block[1]][block[0]].colorState = fallingTetrisColor;
+//     tetrisArray[block[1]][block[0]].solid = true;
+//     tetrisArray[block[1]][block[0]].shadow = false;
+//   }
+// }
 
 
 function clearFallingTetris() {
   for (let block of currentFallingTetris) {
     tetrisArray[block[1]][block[0]].colorState = 0;
+    tetrisArray[block[1]][block[0]].falling = false;
   }
 }
 
@@ -246,4 +245,14 @@ function setColorPallet() {
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   setSquareSize();
+}
+
+
+function findFallingBlocks() {
+  currentFallingTetris = [];
+  for (let block of randomFallingTetris) {
+    currentFallingTetris.push([block[0] + fallingTetrisCoordinate[0], block[1] + fallingTetrisCoordinate[1]]);
+    tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].colorState = fallingTetrisColor;
+    tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].falling = true;
+  }
 }
