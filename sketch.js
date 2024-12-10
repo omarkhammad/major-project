@@ -217,6 +217,7 @@ function moveDown() {
     }
     
     newBlock();
+    clearRow();
   }
 }
 
@@ -231,6 +232,7 @@ function moveAllTheWayDown() {
   clearShadow();
   clearFallingTetris();
   newBlock();
+  clearRow();
 }
 
 
@@ -266,5 +268,19 @@ function findFallingBlocks() {
 
 
 function clearRow() {
-  
+  // let rowIsClear = true;
+  // for (let row of tetrisArray) {
+  //   for (let block of row) {
+  //     if (!block.solid) {
+  //       rowIsClear = false;
+  //     }
+  //   }
+// 
+  //   if (rowIsClear) {
+  //     for (let block of row) {
+  //       block.solid = false;
+  //       block.colorState = 0;
+  //     }
+  //   }
+  // }
 }
