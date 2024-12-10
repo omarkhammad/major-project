@@ -18,3 +18,4 @@ I am going to make a Tetris game
 - A sidebar that shows your future blocks
 - Falling blocks can be swapped out
 - Falling blocks show an outline on where they are projected to fall
+- Holding a movement button down speeds up the movement
