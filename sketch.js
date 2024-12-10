@@ -19,7 +19,6 @@ let allFallingBlocks =
   [[-1, 1], [0, 0], [0, 1], [1, 1]],   // T
   [[1, 0], [-1, 1], [0, 1], [1, 1]],   // L
   [[-1, 0], [-1, 1], [0, 1], [1, 1]]]; // Reverse L
-let fallingBlocks = [];
 let shadowArray = [];
 let tetrisColorPallet;
 let tetrisShadowColorPallet = [];
@@ -121,6 +120,7 @@ function newBlock() {
 
   fallingTetrisCoordinate = [4, 0];
   findFallingBlocks();
+  findShadow();
 }
 
 function keyPressed() {
@@ -162,8 +162,10 @@ function findShadow() {
 
 function clearShadow() {
   for (let block of shadowArray) {
-    block.colorState = 0;
     block.shadow = false;
+    if (!block.solid) {
+      block.colorState = 0;
+    }
   }
   shadowArray = [];
 }
@@ -204,27 +206,32 @@ function moveDown() {
     fallingTetrisCoordinate[1]++;
       
     findFallingBlocks();
+    findShadow();
   }
   else {
     for (let block of currentFallingTetris) {
       tetrisArray[block[1]][block[0]].colorState = fallingTetrisColor;
       tetrisArray[block[1]][block[0]].solid = true;
       tetrisArray[block[1]][block[0]].shadow = false;
+      tetrisArray[block[1]][block[0]].falling = false;
     }
     
     newBlock();
   }
-  findShadow();
 }
 
 
-// function moveAllTheWayDown() {
-//   for (let block of currentFallingTetris) {
-//     tetrisArray[block[1]][block[0]].colorState = fallingTetrisColor;
-//     tetrisArray[block[1]][block[0]].solid = true;
-//     tetrisArray[block[1]][block[0]].shadow = false;
-//   }
-// }
+function moveAllTheWayDown() {
+  for (let block of shadowArray) {
+    block.colorState = fallingTetrisColor;
+    block.solid = true;
+    block.shadow = false;
+    block.falling = false;
+  }
+  clearShadow();
+  clearFallingTetris();
+  newBlock();
+}
 
 
 function clearFallingTetris() {
@@ -236,7 +243,7 @@ function clearFallingTetris() {
 
 
 function setColorPallet() {
-  tetrisColorPallet = [color("grey"), color("red"), color("blue"), color("green")];
+  tetrisColorPallet = [color("grey"), color(3, 65, 174), color(114, 203, 59), color(255, 213, 0), color(255, 151, 28), color(255, 50, 19)];
   for (let theColor of tetrisColorPallet) {
     tetrisShadowColorPallet.push(lerpColor(tetrisColorPallet[0], theColor, SHADOW_FADE));
   }
@@ -255,4 +262,9 @@ function findFallingBlocks() {
     tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].colorState = fallingTetrisColor;
     tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].falling = true;
   }
+}
+
+
+function clearRow() {
+  
 }
