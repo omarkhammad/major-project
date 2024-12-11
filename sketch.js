@@ -12,13 +12,13 @@ let randomFallingTetris;
 let fallingTetrisCoordinate;
 let fallingTetrisColor;
 let allFallingBlocks = 
-[[[0, 0], [0, 1], [1, 0], [1, 1]],     // Square
-  [[-1, 0], [0, 0], [1, 0], [2, 0]],   // Line
+[[[0, 0], [0, 1], [1, 0], [1, 1]],     // O
+  [[-1, 0], [0, 0], [1, 0], [2, 0]],   // I
   [[-1, 0], [0, 0], [0, 1], [1, 1]],   // Z
   [[-1, 1], [0, 0], [0, 1], [1, 0]],   // S
   [[-1, 1], [0, 0], [0, 1], [1, 1]],   // T
   [[1, 0], [-1, 1], [0, 1], [1, 1]],   // L
-  [[-1, 0], [-1, 1], [0, 1], [1, 1]]]; // Reverse L
+  [[-1, 0], [-1, 1], [0, 1], [1, 1]]]; // J
 let shadowArray = [];
 let tetrisColorPallet;
 let tetrisShadowColorPallet = [];
@@ -61,6 +61,7 @@ function setup() {
   setSquareSize();
   newBlock();
   findShadow();
+  window.setInterval(moveDown, 500);
 }
 
 
@@ -163,7 +164,7 @@ function findShadow() {
 function clearShadow() {
   for (let block of shadowArray) {
     block.shadow = false;
-    if (!block.solid) {
+    if (!block.solid && !block.falling) {
       block.colorState = 0;
     }
   }
@@ -223,6 +224,7 @@ function moveDown() {
 
 
 function moveAllTheWayDown() {
+  clearFallingTetris();
   for (let block of shadowArray) {
     block.colorState = fallingTetrisColor;
     block.solid = true;
@@ -230,7 +232,6 @@ function moveAllTheWayDown() {
     block.falling = false;
   }
   clearShadow();
-  clearFallingTetris();
   newBlock();
   clearRow();
 }
@@ -268,19 +269,22 @@ function findFallingBlocks() {
 
 
 function clearRow() {
-  // let rowIsClear = true;
-  // for (let row of tetrisArray) {
-  //   for (let block of row) {
-  //     if (!block.solid) {
-  //       rowIsClear = false;
-  //     }
-  //   }
-// 
-  //   if (rowIsClear) {
-  //     for (let block of row) {
-  //       block.solid = false;
-  //       block.colorState = 0;
-  //     }
-  //   }
-  // }
+  let rowIsClear;
+  for (let row of tetrisArray) {
+    rowIsClear = true;
+    for (let block of row) {
+      if (!block.solid) {
+        rowIsClear = false;
+      }
+    }
+    
+    if (rowIsClear) {
+      for (let block of row) {
+        block.solid = false;
+        block.colorState = 0;
+      }
+      // tetrisArray.splice(tetrisArray.indexOf(row), 1);
+      // tetrisArray.push();
+    }
+  }
 }

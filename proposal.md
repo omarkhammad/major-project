@@ -19,3 +19,4 @@ I am going to make a Tetris game
 - Falling blocks can be swapped out
 - Falling blocks show an outline on where they are projected to fall
 - Holding a movement button down speeds up the movement
+- Have visual effects as the player begins loosing
