@@ -36,6 +36,11 @@ class Tetris {
   }
 
 
+  dropHeightByOne() {
+    this.row++;
+  }
+
+
   setCoordinates() {
     this.x = this.col * squareSize + xSquarePadding;
     this.y = this.row * squareSize;
@@ -279,12 +284,28 @@ function clearRow() {
     }
     
     if (rowIsClear) {
-      for (let block of row) {
-        block.solid = false;
-        block.colorState = 0;
-      }
-      // tetrisArray.splice(tetrisArray.indexOf(row), 1);
-      // tetrisArray.push();
+      dropMultipleRowsByOne(tetrisArray.indexOf(row));
+      tetrisArray.splice(tetrisArray.indexOf(row), 1);
+      addRowToTheTop();
+      setSquareSize();
     }
   }
+}
+
+
+function dropMultipleRowsByOne(rowHeight) {
+  for (let row = rowHeight - 1; row >= 0; row--) {
+    for (let col = 0; col < NUMBER_OF_COLUMNS; col++) {
+      tetrisArray[row][col].dropHeightByOne();
+    }
+  }
+}
+
+function addRowToTheTop() {
+  let arr = [];
+  for (let x = 0; x < NUMBER_OF_COLUMNS; x++) {
+    let newTetris = new Tetris(0, x);
+    arr.push(newTetris);
+  }
+  tetrisArray.unshift(arr);
 }
