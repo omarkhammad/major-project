@@ -23,6 +23,12 @@ let shadowArray = [];
 let tetrisColorPallet;
 let tetrisShadowColorPallet = [];
 const SHADOW_FADE = 0.3;
+let score = 0;
+let rowPointChart = [40, 100, 300, 1200];
+let hardDropPoints = 8;
+let softDropPoints = 4;
+
+let gameIsOver = false;
 
 
 class Tetris {
@@ -77,7 +83,8 @@ function draw() {
       newTetris.display();
     }
   }
-  // Tetris => Tetris.display();
+
+  showScore();
 }
 
 
@@ -127,7 +134,9 @@ function newBlock() {
   fallingTetrisCoordinate = [4, 0];
   findFallingBlocks();
   findShadow();
+  checkGameLoss();
 }
+
 
 function keyPressed() {
   if (key === "ArrowLeft") {
@@ -224,6 +233,7 @@ function moveDown() {
     
     newBlock();
     clearRow();
+    score += softDropPoints;
   }
 }
 
@@ -239,6 +249,7 @@ function moveAllTheWayDown() {
   clearShadow();
   newBlock();
   clearRow();
+  score += hardDropPoints;
 }
 
 
@@ -251,7 +262,7 @@ function clearFallingTetris() {
 
 
 function setColorPallet() {
-  tetrisColorPallet = [color("grey"), color(3, 65, 174), color(114, 203, 59), color(255, 213, 0), color(255, 151, 28), color(255, 50, 19)];
+  tetrisColorPallet = [color(60, 60, 60), color(3, 65, 174), color(114, 203, 59), color(255, 213, 0), color(255, 151, 28), color(255, 50, 19)];
   for (let theColor of tetrisColorPallet) {
     tetrisShadowColorPallet.push(lerpColor(tetrisColorPallet[0], theColor, SHADOW_FADE));
   }
@@ -275,6 +286,7 @@ function findFallingBlocks() {
 
 function clearRow() {
   let rowIsClear;
+  let numberOfRowsCleared = 0;
   for (let row of tetrisArray) {
     rowIsClear = true;
     for (let block of row) {
@@ -284,11 +296,15 @@ function clearRow() {
     }
     
     if (rowIsClear) {
+      numberOfRowsCleared++;
       dropMultipleRowsByOne(tetrisArray.indexOf(row));
       tetrisArray.splice(tetrisArray.indexOf(row), 1);
       addRowToTheTop();
-      setSquareSize();
     }
+  }
+  if (numberOfRowsCleared){
+    setSquareSize();
+    score += rowPointChart[numberOfRowsCleared - 1];
   }
 }
 
@@ -308,4 +324,19 @@ function addRowToTheTop() {
     arr.push(newTetris);
   }
   tetrisArray.unshift(arr);
+}
+
+
+function showScore() {
+  textSize(20);
+  textAlign(LEFT, TOP);
+  text(score, 0, 0);
+}
+
+function checkGameLoss() {
+  for (let block of randomFallingTetris) {
+    if (tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].solid) {
+      gameIsOver = true;
+    }
+  }
 }
