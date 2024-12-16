@@ -19,6 +19,9 @@ let allFallingBlocks =
   [[-1, 1], [0, 0], [0, 1], [1, 1]],   // T
   [[1, 0], [-1, 1], [0, 1], [1, 1]],   // L
   [[-1, 0], [-1, 1], [0, 1], [1, 1]]]; // J
+
+let rotationState = 0;
+
 let shadowArray = [];
 let tetrisColorPallet;
 let tetrisShadowColorPallet = [];
@@ -88,6 +91,25 @@ function draw() {
 }
 
 
+function keyPressed() {
+  if (key === "ArrowLeft") {
+    moveHorizontally(-1);
+  }
+  if (key === "ArrowRight") {
+    moveHorizontally(1);
+  }
+  if (key === "ArrowDown") {
+    moveDown();
+  }
+  if (key === "ArrowUp") {
+    rotateTetris();
+  }
+  if (key === " ") {
+    moveAllTheWayDown();
+  }
+}
+
+
 function setSquareSize() {
   if (width / NUMBER_OF_COLUMNS < height / NUMBER_OF_ROWS) {
     squareSize = width / NUMBER_OF_COLUMNS;
@@ -129,7 +151,7 @@ function allTetris(func) {
 
 function newBlock() {
   fallingTetrisColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
-  randomFallingTetris = allFallingBlocks[Math.floor(Math.random() * allFallingBlocks.length)];
+  randomFallingTetris = Math.floor(Math.random() * 6);
 
   fallingTetrisCoordinate = [4, 0];
   findFallingBlocks();
@@ -137,21 +159,6 @@ function newBlock() {
   checkGameLoss();
 }
 
-
-function keyPressed() {
-  if (key === "ArrowLeft") {
-    moveHorizontally(-1);
-  }
-  if (key === "ArrowRight") {
-    moveHorizontally(1);
-  }
-  if (key === "ArrowDown") {
-    moveDown();
-  }
-  if (key === " ") {
-    moveAllTheWayDown();
-  }
-}
 
 function findShadow() {
   let dropBy = 0;
@@ -238,6 +245,18 @@ function moveDown() {
 }
 
 
+function rotateTetris() {
+  if (rotationState > 2) {
+    rotationState = 0;
+  }
+  else {
+    rotationState++;
+  }
+
+
+}
+
+
 function moveAllTheWayDown() {
   clearFallingTetris();
   for (let block of shadowArray) {
@@ -276,7 +295,7 @@ function windowResized() {
 
 function findFallingBlocks() {
   currentFallingTetris = [];
-  for (let block of randomFallingTetris) {
+  for (let block of allFallingBlocks[randomFallingTetris]) {
     currentFallingTetris.push([block[0] + fallingTetrisCoordinate[0], block[1] + fallingTetrisCoordinate[1]]);
     tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].colorState = fallingTetrisColor;
     tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].falling = true;
@@ -334,7 +353,7 @@ function showScore() {
 }
 
 function checkGameLoss() {
-  for (let block of randomFallingTetris) {
+  for (let block of allFallingBlocks[randomFallingTetris]) {
     if (tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].solid) {
       gameIsOver = true;
     }
