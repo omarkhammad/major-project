@@ -11,47 +11,47 @@ let currentFallingTetris;
 let randomFallingTetris;
 let fallingTetrisCoordinate;
 let fallingTetrisColor;
-let allFallingBlocks = 
-[[[0, 0], [0, 1], [1, 0], [1, 1]],     // O
-  [[-1, 0], [0, 0], [1, 0], [2, 0]],   // I
-  [[-1, 0], [0, 0], [0, 1], [1, 1]],   // Z
-  [[-1, 1], [0, 0], [0, 1], [1, 0]],   // S
-  [[-1, 1], [0, 0], [0, 1], [1, 1]],   // T
-  [[1, 0], [-1, 1], [0, 1], [1, 1]],   // L
-  [[-1, 0], [-1, 1], [0, 1], [1, 1]]]; // J
+// let allFallingBlocks = 
+// [[[0, 0], [0, 1], [1, 0], [1, 1]],     // O
+//   [[-1, 0], [0, 0], [1, 0], [2, 0]],   // I
+//   [[-1, 0], [0, 0], [0, 1], [1, 1]],   // Z
+//   [[-1, 1], [0, 0], [0, 1], [1, 0]],   // S
+//   [[-1, 1], [0, 0], [0, 1], [1, 1]],   // T
+//   [[1, 0], [-1, 1], [0, 1], [1, 1]],   // L
+//   [[-1, 0], [-1, 1], [0, 1], [1, 1]]]; // J
 
-let allAllFallingBlocks = 
+let allFallingBlocks = 
 [[[[0, 0], [0, 1], [1, 0], [1, 1]]],     // O
 
-  [[[-1, 0], [0, 0], [1, 0], [2, 0]]],   // I
-  [[[1, 1], [1, 0], [1, -1], [1, -2]]],   // I
-  [[[-1, -1], [0, -1], [1, -1], [2, -1]]],   // I
-  [[[0, 1], [0, 0], [0, -1], [0, -2]]],   // I
+  [[[-1, 0], [0, 0], [1, 0], [2, 0]],   // I
+  [[1, 1], [1, 0], [1, -1], [1, -2]],   // I
+  [[-1, -1], [0, -1], [1, -1], [2, -1]],   // I
+  [[0, 1], [0, 0], [0, -1], [0, -2]]],   // I
 
-  [[[-1, 0], [0, 0], [0, 1], [1, 1]]],   // Z
-  [[[-1, 0], [0, 0], [0, 1], [1, 1]]],   // Z
-  [[[-1, 0], [0, 0], [0, 1], [1, 1]]],   // Z
-  [[[-1, 0], [0, 0], [0, 1], [1, 1]]],   // Z
+  [[[-1, 0], [0, 0], [0, 1], [1, 1]],   // Z
+  [[1, 0], [0, 2], [0, 1], [1, 1]],   // Z
+  [[-1, 1], [0, 1], [0, 2], [1, 1]],   // Z
+  [[0, 0], [-1, 2], [-1, 1], [0, 1]]],   // Z
 
-  [[[-1, 1], [0, 0], [0, 1], [1, 0]]],   // S
-  [[[-1, 1], [0, 0], [0, 1], [1, 0]]],   // S
-  [[[-1, 1], [0, 0], [0, 1], [1, 0]]],   // S
-  [[[-1, 1], [0, 0], [0, 1], [1, 0]]],   // S
+  [[[-1, 1], [0, 0], [0, 1], [1, 0]],   // S
+  [[1, 1], [0, 0], [0, 1], [1, 0]],   // S
+  [[-1, 2], [0, 1], [0, 2], [1, 1]],   // S
+  [[0, 1], [-1, 0], [-1, 1], [0, 0]]],   // S
 
-  [[[-1, 1], [0, 0], [0, 1], [1, 1]]],   // T
-  [[[-1, 1], [0, 0], [0, 1], [1, 1]]],   // T
-  [[[-1, 1], [0, 0], [0, 1], [1, 1]]],   // T
-  [[[-1, 1], [0, 0], [0, 1], [1, 1]]],   // T
+  [[[0, 0], [-1, 1], [0, 1], [1, 1]],   // T
+  [[0, 0], [-1, 1], [0, 1], [1, -1]],   // T
+  [[0, 0], [-1, 1], [1, -1], [1, 1]],   // T
+  [[0, 0], [-1, -1], [0, 1], [1, 1]]],   // T
 
-  [[[1, 0], [-1, 1], [0, 1], [1, 1]]],   // L
-  [[[1, 0], [-1, 1], [0, 1], [1, 1]]],   // L
-  [[[1, 0], [-1, 1], [0, 1], [1, 1]]],   // L
-  [[[1, 0], [-1, 1], [0, 1], [1, 1]]],   // L
+  [[[1, 0], [-1, 1], [0, 1], [1, 1]],   // L
+  [[0, 0], [0, 1], [0, 2], [1, 2]],   // L
+  [[-1, 2], [-1, 1], [0, 1], [1, 1]],   // L
+  [[0, 0], [0, 1], [0, 2], [-1, 0]]],   // L
 
-  [[[-1, 0], [-1, 1], [0, 1], [1, 1]]], // J
-  [[[-1, 0], [-1, 1], [0, 1], [1, 1]]], // J
-  [[[-1, 0], [-1, 1], [0, 1], [1, 1]]], // J
-  [[[-1, 0], [-1, 1], [0, 1], [1, 1]]]]; // J
+  [[[-1, 0], [-1, 1], [0, 1], [1, 1]], // J
+  [[0, 0], [0, 1], [0, 2], [1, 0]], // J
+  [[1, 2], [-1, 1], [0, 1], [1, 1]], // J
+  [[0, 0], [0, 1], [0, 2], [-1, 2]]]]; // J
 
 
 
@@ -188,6 +188,7 @@ function allTetris(func) {
 
 
 function newBlock() {
+  rotationState = 0;
   fallingTetrisColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
   randomFallingTetris = Math.floor(Math.random() * 6);
 
@@ -333,7 +334,7 @@ function windowResized() {
 
 function findFallingBlocks() {
   currentFallingTetris = [];
-  for (let block of allFallingBlocks[randomFallingTetris]) {
+  for (let block of allFallingBlocks[randomFallingTetris][rotationState]) {
     currentFallingTetris.push([block[0] + fallingTetrisCoordinate[0], block[1] + fallingTetrisCoordinate[1]]);
     tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].colorState = fallingTetrisColor;
     tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].falling = true;
@@ -391,7 +392,7 @@ function showScore() {
 }
 
 function checkGameLoss() {
-  for (let block of allFallingBlocks[randomFallingTetris]) {
+  for (let block of allFallingBlocks[randomFallingTetris][rotationState]) {
     if (tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].solid) {
       gameIsOver = true;
     }
