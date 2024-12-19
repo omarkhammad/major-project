@@ -15,10 +15,10 @@ let fallingTetrisColor;
 let allFallingBlocks = 
 [[[[0, 0], [0, 1], [1, 0], [1, 1]]],     // O
 
-  [[[-1, 0], [0, 0], [1, 0], [2, 0]],   // I
-  [[1, 1], [1, 0], [1, -1], [1, -2]],   // I
-  [[-1, -1], [0, -1], [1, -1], [2, -1]],   // I
-  [[0, 1], [0, 0], [0, -1], [0, -2]]],   // I
+  [[[-1, 1], [0, 1], [1, 1], [2, 1]],   // I
+  [[1, 3], [1, 2], [1, 1], [1, 0]],   // I
+  [[-1, 2], [0, 2], [1, 2], [2, 2]],   // I
+  [[0, 3], [0, 2], [0, 1], [0, 0]]],   // I
 
   [[[-1, 0], [0, 0], [0, 1], [1, 1]],   // Z
   [[1, 0], [0, 2], [0, 1], [1, 1]],   // Z
@@ -26,9 +26,9 @@ let allFallingBlocks =
   [[0, 0], [-1, 2], [-1, 1], [0, 1]]],   // Z
 
   [[[-1, 1], [0, 0], [0, 1], [1, 0]],   // S
-  [[2, 1], [0, 0], [0, 1], [1, 1]],   // S
+  [[1, 2], [0, 0], [0, 1], [1, 1]],   // S
   [[-1, 2], [0, 1], [0, 2], [1, 1]],   // S
-  [[1, 1], [-1, 0], [-1, 1], [0, 1]]],   // S
+  [[0, 2], [-1, 0], [-1, 1], [0, 1]]],   // S
 
   [[[0, 1], [0, 0], [-1, 1], [1, 1]],   // T
   [[0, 1], [0, 0], [0, 2], [1, 1]],   // T
@@ -44,10 +44,6 @@ let allFallingBlocks =
   [[0, 0], [0, 1], [0, 2], [1, 0]], // J
   [[1, 2], [-1, 1], [0, 1], [1, 1]], // J
   [[0, 0], [0, 1], [0, 2], [-1, 2]]]]; // J
-
-
-
-
 
 
 let rotationState = 0;
@@ -105,7 +101,7 @@ function setup() {
   setSquareSize();
   newBlock();
   findShadow();
-  window.setInterval(moveDown, 500);
+  // window.setInterval(moveDown, 500);
 }
 
 
@@ -277,7 +273,7 @@ function moveDown() {
 
 
 function rotateTetris() {
-  if (randomFallingTetris) {
+  if (canRotate()) {
     if (rotationState > 2) {
       rotationState = 0;
     }
@@ -306,6 +302,32 @@ function moveAllTheWayDown() {
   newBlock();
   clearRow();
   score += hardDropPoints;
+}
+
+
+function canRotate() {
+  if (!randomFallingTetris) {
+    return false;
+  }
+
+  let newRotationState;
+  let isClear = true;
+  if (rotationState > 2) {
+    newRotationState = 0;
+  }
+  else {
+    newRotationState = rotationState + 1;
+  }
+
+  for (let block of allFallingBlocks[randomFallingTetris][newRotationState]) {
+    let newX = fallingTetrisCoordinate[0] + block[0];
+    let newY = fallingTetrisCoordinate[1] + block[1];
+    if (!(newX >= 0 && newY >= 0 && newX < NUMBER_OF_COLUMNS && newY < NUMBER_OF_ROWS && !tetrisArray[newY][newX].solid)) {
+      isClear = false;
+    }
+  }
+
+  return isClear;
 }
 
 
