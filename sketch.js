@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 // [name] Tetris
 
 let fallingBlockColor;
@@ -53,6 +54,7 @@ let tetrisColorPallet;
 let tetrisShadowColorPallet = [];
 const SHADOW_FADE = 0.3;
 let score = 0;
+let highScore = 0;
 let rowPointChart = [40, 100, 300, 1200];
 let hardDropPoints = 8;
 let softDropPoints = 4;
@@ -95,6 +97,9 @@ class Tetris {
 
 
 function setup() {
+  if (getItem("highScore")) {
+    highScore = getItem("highScore");
+  }
   createCanvas(windowWidth, windowHeight);
   setColorPallet();
   createEmptySquareGrid();
@@ -267,10 +272,17 @@ function moveDown() {
     
     newBlock();
     clearRow();
-    score += softDropPoints;
+    increaseScore(softDropPoints);
   }
 }
 
+function increaseScore(increaseBy) {
+  score += increaseBy;
+  if (score > highScore) {
+    highScore = score;
+    storeItem("highScore", highScore);
+  }
+}
 
 function rotateTetris() {
   if (canRotate()) {
@@ -301,7 +313,7 @@ function moveAllTheWayDown() {
   clearShadow();
   newBlock();
   clearRow();
-  score += hardDropPoints;
+  increaseScore(hardDropPoints);
 }
 
 
@@ -382,7 +394,7 @@ function clearRow() {
   }
   if (numberOfRowsCleared){
     setSquareSize();
-    score += rowPointChart[numberOfRowsCleared - 1];
+    increaseScore(rowPointChart[numberOfRowsCleared - 1]);
   }
 }
 
@@ -409,6 +421,9 @@ function showScore() {
   textSize(20);
   textAlign(LEFT, TOP);
   text(score, 0, 0);
+  
+  textAlign(RIGHT, TOP);
+  text(highScore, width, 0);
 }
 
 function checkGameLoss() {
