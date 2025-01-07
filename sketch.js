@@ -115,7 +115,7 @@ function setup() {
 function draw() {
   background(255);
 
-  if (frameCount % 20 === 0) {
+  if (frameCount % ( 1000 / Math.ceil(score)) === 0) {
     moveDown();
   }
 
