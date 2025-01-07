@@ -88,8 +88,11 @@ class Tetris {
     if (this.shadow && !this.falling) {
       fill(tetrisShadowColorPallet[this.colorState]);
     }
-    else {
+    else if (this.falling || this.solid) {
       fill(tetrisColorPallet[this.colorState]);
+    }
+    else {
+      fill(tetrisColorPallet[0]);
     }
     square(this.x + xSquarePadding, this.y + ySquarePadding, squareSize);
   }
@@ -106,12 +109,16 @@ function setup() {
   setSquareSize();
   newBlock();
   findShadow();
-  // window.setInterval(moveDown, 500);
 }
 
 
 function draw() {
   background(255);
+
+  if (frameCount % 20 === 0) {
+    moveDown();
+  }
+
   for (let arr of tetrisArray) {
     for (let newTetris of arr) {
       newTetris.display();
