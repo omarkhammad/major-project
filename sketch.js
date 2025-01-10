@@ -109,13 +109,16 @@ function setup() {
   setSquareSize();
   newBlock();
   findShadow();
+
+	glitch = new Glitch();
 }
 
 
 function draw() {
   background(255);
 
-  if (frameCount % ( 1000 / Math.ceil(score)) === 0) {
+
+  if (frameCount % 15 === 0) {
     moveDown();
   }
 
@@ -165,6 +168,7 @@ function setSquareSize() {
     }
   }
 }
+
 
 function createEmptySquareGrid() {
   for (let y = 0; y < NUMBER_OF_ROWS; y++) {
@@ -382,26 +386,41 @@ function findFallingBlocks() {
 
 
 function clearRow() {
-  let rowIsClear;
+  let rowIsFull;
+  let rowHasBlock;
   let numberOfRowsCleared = 0;
+  let numberOfRowsWithBlocks = 0;
   for (let row of tetrisArray) {
-    rowIsClear = true;
+    rowIsFull = true;
+    rowHasBlock = false;
     for (let block of row) {
       if (!block.solid) {
-        rowIsClear = false;
+        rowIsFull = false;
+      }
+      else {
+        rowHasBlock = true;
       }
     }
     
-    if (rowIsClear) {
+    if (rowIsFull) {
       numberOfRowsCleared++;
       dropMultipleRowsByOne(tetrisArray.indexOf(row));
       tetrisArray.splice(tetrisArray.indexOf(row), 1);
       addRowToTheTop();
     }
+
+    if (rowHasBlock) {
+      numberOfRowsWithBlocks++;
+    }
   }
+
   if (numberOfRowsCleared){
     setSquareSize();
     increaseScore(rowPointChart[numberOfRowsCleared - 1]);
+  }
+
+  if (numberOfRowsWithBlocks) {
+    glitch.pixelate(1 - numberOfRowsWithBlocks / NUMBER_OF_ROWS);
   }
 }
 
