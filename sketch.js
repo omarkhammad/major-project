@@ -94,7 +94,7 @@ class Tetris {
     else {
       fill(tetrisColorPallet[0]);
     }
-    square(this.x + xSquarePadding, this.y + ySquarePadding, squareSize);
+    square(this.x + xSquarePadding, this.y + ySquarePadding, squareSize,);
   }
 }
 
@@ -118,9 +118,9 @@ function draw() {
   background(255);
 
 
-  if (frameCount % 15 === 0) {
-    moveDown();
-  }
+  // if (frameCount % 15 === 0) {
+  //   moveDown();
+  // }
 
   for (let arr of tetrisArray) {
     for (let newTetris of arr) {
@@ -194,7 +194,7 @@ function allTetris(func) {
 function newBlock() {
   rotationState = 0;
   fallingTetrisColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
-  randomFallingTetris = Math.floor(Math.random() * 6);
+  randomFallingTetris = Math.floor(Math.random() * 6); // 6? there are 7 different blocks
 
   fallingTetrisCoordinate = [4, 0];
   findFallingBlocks();
@@ -359,6 +359,7 @@ function clearFallingTetris() {
     tetrisArray[block[1]][block[0]].colorState = 0;
     tetrisArray[block[1]][block[0]].falling = false;
   }
+  currentFallingTetris = [];
 }
 
 
@@ -420,7 +421,7 @@ function clearRow() {
   }
 
   if (numberOfRowsWithBlocks) {
-    glitch.pixelate(1 - numberOfRowsWithBlocks / NUMBER_OF_ROWS);
+    // glitch.pixelate(1.0001 - numberOfRowsWithBlocks / NUMBER_OF_ROWS);
   }
 }
 
@@ -444,6 +445,7 @@ function addRowToTheTop() {
 
 
 function showScore() {
+  fill("black");
   textSize(20);
   textAlign(LEFT, TOP);
   text(score, 0, 0);
