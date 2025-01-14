@@ -61,6 +61,8 @@ let softDropPoints = 4;
 
 let gameIsOver = false;
 
+let nextRandomFallingTetris;
+let hasBeenSwapped = false;
 
 class Tetris {
   constructor(row, col) {
@@ -111,6 +113,8 @@ function setup() {
   findShadow();
 
 	glitch = new Glitch();
+  
+  nextRandomFallingTetris = Math.floor(Math.random() * 7);
 }
 
 
@@ -118,9 +122,9 @@ function draw() {
   background(255);
 
 
-  // if (frameCount % 15 === 0) {
-  //   moveDown();
-  // }
+  if (frameCount % 15 === 0) {
+    moveDown();
+  }
 
   for (let arr of tetrisArray) {
     for (let newTetris of arr) {
@@ -147,6 +151,9 @@ function keyPressed() {
   }
   if (key === " ") {
     moveAllTheWayDown();
+  }
+  if (key === "c") {
+    swapBlocks();
   }
 }
 
@@ -193,10 +200,12 @@ function allTetris(func) {
 
 function newBlock() {
   rotationState = 0;
+  hasBeenSwapped = false;
   fallingTetrisColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
-  randomFallingTetris = Math.floor(Math.random() * 6); // 6? there are 7 different blocks
+  randomFallingTetris = Math.floor(Math.random() * 7);
 
   fallingTetrisCoordinate = [4, 0];
+  clearFallingTetris();
   findFallingBlocks();
   findShadow();
   checkGameLoss();
@@ -355,11 +364,29 @@ function canRotate() {
 
 
 function clearFallingTetris() {
-  for (let block of currentFallingTetris) {
-    tetrisArray[block[1]][block[0]].colorState = 0;
-    tetrisArray[block[1]][block[0]].falling = false;
+  if (currentFallingTetris) {
+    for (let block of currentFallingTetris) {
+      tetrisArray[block[1]][block[0]].colorState = 0;
+      tetrisArray[block[1]][block[0]].falling = false;
+    }
+    currentFallingTetris = [];
   }
-  currentFallingTetris = [];
+}
+
+
+function swapBlocks() {
+  if (!hasBeenSwapped) {
+    randomFallingTetris = [nextRandomFallingTetris, nextRandomFallingTetris = randomFallingTetris][0];
+    randomFallingTetris = Math.floor(Math.random() * 7);
+
+    fallingTetrisCoordinate = [4, 0];
+    clearFallingTetris();
+    findFallingBlocks();
+    clearShadow();
+    findShadow();
+
+    hasBeenSwapped = true;
+  }
 }
 
 
