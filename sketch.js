@@ -255,7 +255,10 @@ function moveHorizontally(shift) {
 
   if (isClear) {
     fallingTetrisCoordinate[0] += shift;
-    changeFallingTetrisState();
+    clearShadow();
+    clearFallingTetris();
+    findFallingBlocks();
+    findShadow();
   }
 }
 
@@ -269,11 +272,20 @@ function moveDown() {
   }
 
   if (isClear) {
+    clearFallingTetris();
+
     fallingTetrisCoordinate[1]++;
-    changeFallingTetrisState();
+      
+    findFallingBlocks();
+    findShadow();
   }
   else {
-    changeFallingTetrisState();
+    replaceShadowWithSolid();
+    currentFallingTetris = [];
+    clearShadow();
+    
+    newBlock();
+    clearRow();
     increaseScore(softDropPoints);
   }
 }
@@ -294,13 +306,21 @@ function rotateTetris() {
     else {
       rotationState++;
     }
-    changeFallingTetrisState();
+    clearFallingTetris();
+    clearShadow();
+    findFallingBlocks();
+    findShadow();
   }
+
+
 }
 
 
 function moveAllTheWayDown() {
-  changeFallingTetrisState();
+  clearFallingTetris();
+  replaceShadowWithSolid();
+  clearShadow();
+  newBlock();
   clearRow();
   increaseScore(hardDropPoints);
 }
@@ -342,13 +362,6 @@ function canRotate() {
 }
 
 
-function changeFallingTetrisState() {
-  clearFallingTetris();
-  clearShadow();
-  findFallingBlocks();
-  findShadow();
-}
-
 
 function clearFallingTetris() {
   if (currentFallingTetris) {
@@ -368,7 +381,10 @@ function swapBlocks() {
     randomFallingTetris = Math.floor(Math.random() * 7);
 
     fallingTetrisCoordinate = [4, 0];
-    changeFallingTetrisState();
+    clearFallingTetris();
+    findFallingBlocks();
+    clearShadow();
+    findShadow();
 
     hasBeenSwapped = true;
   }
