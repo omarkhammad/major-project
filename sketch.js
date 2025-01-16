@@ -254,19 +254,13 @@ function moveHorizontally(shift) {
   }
 
   if (isClear) {
-    clearShadow();
-    clearFallingTetris();
-
     fallingTetrisCoordinate[0] += shift;
-      
-    findFallingBlocks();
-    findShadow();
+    changeFallingTetrisState();
   }
 }
 
 
 function moveDown() {
-  clearShadow();
   let isClear = "true";
   for (let block of currentFallingTetris) {
     if (block [1] + 2 > NUMBER_OF_ROWS || tetrisArray[block[1] + 1][block[0]].solid) {
@@ -275,23 +269,11 @@ function moveDown() {
   }
 
   if (isClear) {
-    clearFallingTetris();
-
     fallingTetrisCoordinate[1]++;
-      
-    findFallingBlocks();
-    findShadow();
+    changeFallingTetrisState();
   }
   else {
-    for (let block of currentFallingTetris) {
-      tetrisArray[block[1]][block[0]].colorState = fallingTetrisColor;
-      tetrisArray[block[1]][block[0]].solid = true;
-      tetrisArray[block[1]][block[0]].shadow = false;
-      tetrisArray[block[1]][block[0]].falling = false;
-    }
-    
-    newBlock();
-    clearRow();
+    changeFallingTetrisState();
     increaseScore(softDropPoints);
   }
 }
@@ -312,28 +294,25 @@ function rotateTetris() {
     else {
       rotationState++;
     }
-    clearFallingTetris();
-    clearShadow();
-    findFallingBlocks();
-    findShadow();
+    changeFallingTetrisState();
   }
-
-
 }
 
 
 function moveAllTheWayDown() {
-  clearFallingTetris();
+  changeFallingTetrisState();
+  clearRow();
+  increaseScore(hardDropPoints);
+}
+
+
+function replaceShadowWithSolid() {
   for (let block of shadowArray) {
     block.colorState = fallingTetrisColor;
     block.solid = true;
     block.shadow = false;
     block.falling = false;
   }
-  clearShadow();
-  newBlock();
-  clearRow();
-  increaseScore(hardDropPoints);
 }
 
 
@@ -363,6 +342,14 @@ function canRotate() {
 }
 
 
+function changeFallingTetrisState() {
+  clearFallingTetris();
+  clearShadow();
+  findFallingBlocks();
+  findShadow();
+}
+
+
 function clearFallingTetris() {
   if (currentFallingTetris) {
     for (let block of currentFallingTetris) {
@@ -376,14 +363,12 @@ function clearFallingTetris() {
 
 function swapBlocks() {
   if (!hasBeenSwapped) {
+    rotationState = 0
     randomFallingTetris = [nextRandomFallingTetris, nextRandomFallingTetris = randomFallingTetris][0];
     randomFallingTetris = Math.floor(Math.random() * 7);
 
     fallingTetrisCoordinate = [4, 0];
-    clearFallingTetris();
-    findFallingBlocks();
-    clearShadow();
-    findShadow();
+    changeFallingTetrisState();
 
     hasBeenSwapped = true;
   }
