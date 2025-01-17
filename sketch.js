@@ -13,6 +13,9 @@ let randomFallingTetris;
 let fallingTetrisCoordinate;
 let fallingTetrisColor;
 
+
+let numberOfRowsWithBlocks = 0;
+
 let allFallingBlocks = 
 [[[[0, 0], [0, 1], [1, 0], [1, 1]]],     // O
 
@@ -133,6 +136,7 @@ function draw() {
   }
 
   showScore();
+  filter(BLUR, numberOfRowsWithBlocks);
 }
 
 
@@ -360,7 +364,7 @@ function canRotate() {
 
   return isClear;
 }
-
+ 
 
 
 function clearFallingTetris() {
@@ -418,7 +422,7 @@ function clearRow() {
   let rowIsFull;
   let rowHasBlock;
   let numberOfRowsCleared = 0;
-  let numberOfRowsWithBlocks = 0;
+  numberOfRowsWithBlocks = 0;
   for (let row of tetrisArray) {
     rowIsFull = true;
     rowHasBlock = false;
@@ -446,10 +450,6 @@ function clearRow() {
   if (numberOfRowsCleared){
     setSquareSize();
     increaseScore(rowPointChart[numberOfRowsCleared - 1]);
-  }
-
-  if (numberOfRowsWithBlocks) {
-    // glitch.pixelate(1.0001 - numberOfRowsWithBlocks / NUMBER_OF_ROWS);
   }
 }
 
