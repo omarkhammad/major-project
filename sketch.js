@@ -13,6 +13,8 @@ let randomFallingTetris;
 let fallingTetrisCoordinate;
 let fallingTetrisColor;
 
+let backgroundMusic;
+
 
 let numberOfRowsWithBlocks = 0;
 
@@ -62,10 +64,17 @@ let rowPointChart = [40, 100, 300, 1200];
 let hardDropPoints = 8;
 let softDropPoints = 4;
 
+let gameState = "idle";
 let gameIsOver = false;
 
-let nextRandomFallingTetris;
+let swappedRandomFallingTetris;
+let swappedFallingTetrisColor;
 let hasBeenSwapped = false;
+
+let titleXShift = 5;
+let titleYShift = 0;
+let textColorGradients;
+
 
 class Tetris {
   constructor(row, col) {
@@ -104,6 +113,11 @@ class Tetris {
 }
 
 
+function preload() {
+  backgroundMusic = loadSound("background-music.mp3");
+}
+
+
 function setup() {
   if (getItem("highScore")) {
     highScore = getItem("highScore");
@@ -114,50 +128,113 @@ function setup() {
   setSquareSize();
   newBlock();
   findShadow();
-
-	glitch = new Glitch();
   
-  nextRandomFallingTetris = Math.floor(Math.random() * 7);
+  swappedRandomFallingTetris = Math.floor(Math.random() * 7);
+  swappedFallingTetrisColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
+
+  textColorGradients = [color(255, 193, 0), color(255, 154, 0), color(255, 116, 0), color(255, 77, 0), color(255, 0, 0)];
+
+  displayGrid();
+  filter(BLUR, 20);
 }
 
 
 function draw() {
-  background(255);
-
-
-  if (frameCount % 15 === 0) {
-    moveDown();
+  if (gameState === "idle") {
   }
+  else if (gameState === "playing") {
+    background(255);
 
-  for (let arr of tetrisArray) {
-    for (let newTetris of arr) {
-      newTetris.display();
+    if (frameCount % 15 === 0) {
+      moveDown();
     }
-  }
 
-  showScore();
-  filter(BLUR, numberOfRowsWithBlocks);
+    for (let arr of tetrisArray) {
+      for (let newTetris of arr) {
+        newTetris.display();
+      }
+    }
+
+    showScore();
+    displaySwappedTetris();
+    //filter(BLUR, numberOfRowsWithBlocks*.5);
+  }
 }
 
 
 function keyPressed() {
-  if (key === "ArrowLeft") {
-    moveHorizontally(-1);
+  if (gameState === "playing") {
+    if (key === "ArrowLeft") {
+      moveHorizontally(-1);
+    }
+    if (key === "ArrowRight") {
+      moveHorizontally(1);
+    }
+    if (key === "ArrowDown") {
+      moveDown();
+    }
+    if (key === "ArrowUp") {
+      rotateTetris();
+    }
+    if (key === " ") {
+      moveAllTheWayDown();
+    }
+    if (key === "c") {
+      swapBlocks();
+    }
   }
-  if (key === "ArrowRight") {
-    moveHorizontally(1);
+}
+
+
+function mouseClicked() {
+  if (gameState === "idle") {
+    gameState = "liminal";
+  
+    backgroundMusic.loop();
+    backgroundMusic.setVolume(0.1);
+
+    let delayBlurCountdownArray = [["3", 15, 900], ["2", 10, 1900], ["1", 5, 3100], ["", 0, 4000]];
+    for (let delayBlurCountdown of delayBlurCountdownArray) {
+      delayedBlur(delayBlurCountdown[0], delayBlurCountdown[1], delayBlurCountdown[2]);
+    }
   }
-  if (key === "ArrowDown") {
-    moveDown();
+}
+
+
+function delayedBlur(countdown, blurriness, delay) {
+  setTimeout(() => {
+    displayGrid();
+    filter(BLUR, blurriness);
+    console.log(countdown, blurriness, delay);
+
+    if (!!countdown) {
+      displayTextInCenter(countdown, 250);
+    }
+    else {
+      gameState = "playing";
+    }
+
+  }, delay);
+}
+
+
+function displayTextInCenter(string, size) {
+  textAlign(CENTER);
+  textSize(size);
+
+  for (let textNumber = 0; textNumber < textColorGradients.length; textNumber++) {
+    // Creates multiple layers of text to make a gradient illusion
+    fill(textColorGradients[textNumber]);
+    text(string, width / 2 + titleXShift * (textColorGradients.length - textNumber), height / 2 + titleYShift * (textColorGradients.length - textNumber));
   }
-  if (key === "ArrowUp") {
-    rotateTetris();
-  }
-  if (key === " ") {
-    moveAllTheWayDown();
-  }
-  if (key === "c") {
-    swapBlocks();
+}
+
+
+function displayGrid() {
+  for (let arr of tetrisArray) {
+    for (let newTetris of arr) {
+      newTetris.display();
+    }
   }
 }
 
@@ -203,15 +280,14 @@ function allTetris(func) {
 
 
 function newBlock() {
+  clearRow();
   rotationState = 0;
   hasBeenSwapped = false;
   fallingTetrisColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
   randomFallingTetris = Math.floor(Math.random() * 7);
 
   fallingTetrisCoordinate = [4, 0];
-  clearFallingTetris();
-  findFallingBlocks();
-  findShadow();
+  updateTetrisFrame();
   checkGameLoss();
 }
 
@@ -259,10 +335,7 @@ function moveHorizontally(shift) {
 
   if (isClear) {
     fallingTetrisCoordinate[0] += shift;
-    clearShadow();
-    clearFallingTetris();
-    findFallingBlocks();
-    findShadow();
+    updateTetrisFrame();
   }
 }
 
@@ -276,12 +349,8 @@ function moveDown() {
   }
 
   if (isClear) {
-    clearFallingTetris();
-
     fallingTetrisCoordinate[1]++;
-      
-    findFallingBlocks();
-    findShadow();
+    updateTetrisFrame();
   }
   else {
     replaceShadowWithSolid();
@@ -289,7 +358,6 @@ function moveDown() {
     clearShadow();
     
     newBlock();
-    clearRow();
     increaseScore(softDropPoints);
   }
 }
@@ -310,10 +378,7 @@ function rotateTetris() {
     else {
       rotationState++;
     }
-    clearFallingTetris();
-    clearShadow();
-    findFallingBlocks();
-    findShadow();
+    updateTetrisFrame();
   }
 
 
@@ -323,9 +388,7 @@ function rotateTetris() {
 function moveAllTheWayDown() {
   clearFallingTetris();
   replaceShadowWithSolid();
-  clearShadow();
   newBlock();
-  clearRow();
   increaseScore(hardDropPoints);
 }
 
@@ -337,6 +400,8 @@ function replaceShadowWithSolid() {
     block.shadow = false;
     block.falling = false;
   }
+  currentFallingTetris = [];
+  shadowArray = [];
 }
 
 
@@ -380,15 +445,13 @@ function clearFallingTetris() {
 
 function swapBlocks() {
   if (!hasBeenSwapped) {
-    rotationState = 0
-    randomFallingTetris = [nextRandomFallingTetris, nextRandomFallingTetris = randomFallingTetris][0];
-    randomFallingTetris = Math.floor(Math.random() * 7);
+    rotationState = 0;
+    randomFallingTetris = [swappedRandomFallingTetris, swappedRandomFallingTetris = randomFallingTetris][0];
+    fallingTetrisColor = [swappedFallingTetrisColor, swappedFallingTetrisColor = fallingTetrisColor][0];
+    
 
     fallingTetrisCoordinate = [4, 0];
-    clearFallingTetris();
-    findFallingBlocks();
-    clearShadow();
-    findShadow();
+    updateTetrisFrame();
 
     hasBeenSwapped = true;
   }
@@ -474,18 +537,38 @@ function addRowToTheTop() {
 
 function showScore() {
   fill("black");
-  textSize(20);
+  textSize(70);
   textAlign(LEFT, TOP);
-  text(score, 0, 0);
+  text(withComas(score), 0, 0);
   
   textAlign(RIGHT, TOP);
-  text(highScore, width, 0);
+  text(withComas(highScore), width, 0);
 }
 
 function checkGameLoss() {
   for (let block of allFallingBlocks[randomFallingTetris][rotationState]) {
     if (tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].solid) {
       gameIsOver = true;
+      location.reload();
     }
   }
+}
+
+
+function withComas(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+
+function updateTetrisFrame() {
+  clearFallingTetris();
+  findFallingBlocks();
+  clearShadow();
+  findShadow();
+}
+
+
+function displaySwappedTetris() {
+  // fill("black");
+  // square(xSquarePadding * 2 - 160, 10, 150, );
 }
