@@ -14,6 +14,8 @@ let fallingTetrisCoordinate;
 let fallingTetrisColor;
 
 let backgroundMusic;
+let placeSound;
+let lostSound;
 
 
 let numberOfRowsWithBlocks = 0;
@@ -118,6 +120,8 @@ class Tetris {
 
 function preload() {
   backgroundMusic = loadSound("background-music.mp3");
+  placeSound = loadSound("placeSound.wav");
+  lostSound = loadSound("lostSound.wav");
 }
 
 
@@ -139,6 +143,10 @@ function setup() {
 
   displayGrid();
   filter(BLUR, 30);
+
+  lostSound.setVolume(0.03);
+  backgroundMusic.setVolume(0.1);
+  placeSound.setVolume(0.1);
 }
 
 
@@ -160,7 +168,6 @@ function draw() {
     }
 
     showScore();
-    displaySwappedTetris();
     //filter(BLUR, numberOfRowsWithBlocks*0.5);
   }
   else if (gameState === "lost") {
@@ -209,7 +216,6 @@ function mouseClicked() {
     gameState = "liminal";
   
     backgroundMusic.loop();
-    backgroundMusic.setVolume(0.1);
 
     let delayBlurCountdownArray = [["3", 15, 900], ["2", 10, 1900], ["1", 5, 3100], ["", 0, 4000]];
     for (let delayBlurCountdown of delayBlurCountdownArray) {
@@ -383,6 +389,7 @@ function moveDown() {
   }
 }
 
+
 function increaseScore(increaseBy) {
   score += increaseBy;
   if (score > highScore) {
@@ -390,6 +397,7 @@ function increaseScore(increaseBy) {
     storeItem("highScore", highScore);
   }
 }
+
 
 function rotateTetris() {
   if (canRotate()) {
@@ -434,6 +442,8 @@ function replaceShadowWithSolid() {
   }
   currentFallingTetris = [];
   shadowArray = [];
+
+  placeSound.play();
 }
 
 
@@ -496,6 +506,7 @@ function setColorPallet() {
     tetrisShadowColorPallet.push(lerpColor(tetrisColorPallet[0], theColor, SHADOW_FADE));
   }
 }
+
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
@@ -577,10 +588,13 @@ function showScore() {
   text(withComas(highScore), width, 0);
 }
 
+
 function checkGameLoss() {
   for (let block of allFallingBlocks[randomFallingTetris][rotationState]) {
     if (tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].solid) {
       gameState = "lost";
+      backgroundMusic.stop();
+      lostSound.play();
     }
   }
 }
@@ -596,10 +610,4 @@ function updateTetrisFrame() {
   findFallingBlocks();
   clearShadow();
   findShadow();
-}
-
-
-function displaySwappedTetris() {
-  // fill("black");
-  // square(xSquarePadding * 2 - 160, 10, 150, );
 }
