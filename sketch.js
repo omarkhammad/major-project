@@ -189,6 +189,9 @@ function keyPressed() {
     if (key === "c") {
       swapBlocks();
     }
+    if (key === "z") {
+      rotateTetrisOtherWay();
+    }
     if (key === "Escape") {
       gameState = "pause";
       filter(BLUR, 20);
@@ -196,7 +199,7 @@ function keyPressed() {
     }
   }
   else if (key === "Escape" || gameState === "pause") {
-    gameState = playing;
+    gameState = "playing";
   }
 }
 
