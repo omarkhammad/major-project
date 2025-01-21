@@ -65,7 +65,6 @@ let hardDropPoints = 8;
 let softDropPoints = 4;
 
 let gameState = "idle";
-let gameIsOver = false;
 
 let swappedRandomFallingTetris;
 let swappedFallingTetrisColor;
@@ -101,14 +100,18 @@ class Tetris {
   display() {
     if (this.shadow && !this.falling) {
       fill(tetrisShadowColorPallet[this.colorState]);
+      square(this.x + xSquarePadding, this.y + ySquarePadding, squareSize);
     }
     else if (this.falling || this.solid) {
+      fill(tetrisShadowColorPallet[this.colorState]);
+      square(this.x + xSquarePadding, this.y + ySquarePadding, squareSize);
       fill(tetrisColorPallet[this.colorState]);
+      square(this.x + xSquarePadding+5, this.y + ySquarePadding+5, squareSize-10);
     }
     else {
       fill(tetrisColorPallet[0]);
+      square(this.x + xSquarePadding, this.y + ySquarePadding, squareSize);
     }
-    square(this.x + xSquarePadding, this.y + ySquarePadding, squareSize,);
   }
 }
 
@@ -135,12 +138,13 @@ function setup() {
   textColorGradients = [color(255, 193, 0), color(255, 154, 0), color(255, 116, 0), color(255, 77, 0), color(255, 0, 0)];
 
   displayGrid();
-  filter(BLUR, 20);
+  filter(BLUR, 30);
 }
 
 
 function draw() {
   if (gameState === "idle") {
+    displayTextInCenter("Click to Start");
   }
   else if (gameState === "playing") {
     background(255);
@@ -157,7 +161,10 @@ function draw() {
 
     showScore();
     displaySwappedTetris();
-    //filter(BLUR, numberOfRowsWithBlocks*.5);
+    //filter(BLUR, numberOfRowsWithBlocks*0.5);
+  }
+  else if (gameState === "lost") {
+    displayTextInCenter("Game Over\nclick to restart");
   }
 }
 
@@ -182,6 +189,14 @@ function keyPressed() {
     if (key === "c") {
       swapBlocks();
     }
+    if (key === "Escape") {
+      gameState = "pause";
+      filter(BLUR, 20);
+      displayTextInCenter("Paused");
+    }
+  }
+  else if (key === "Escape" || gameState === "pause") {
+    gameState = playing;
   }
 }
 
@@ -198,14 +213,17 @@ function mouseClicked() {
       delayedBlur(delayBlurCountdown[0], delayBlurCountdown[1], delayBlurCountdown[2]);
     }
   }
+  else if (gameState === "lost") {
+    location.reload();
+  }
 }
 
 
 function delayedBlur(countdown, blurriness, delay) {
   setTimeout(() => {
+    background(255);
     displayGrid();
     filter(BLUR, blurriness);
-    console.log(countdown, blurriness, delay);
 
     if (!!countdown) {
       displayTextInCenter(countdown, 250);
@@ -218,8 +236,8 @@ function delayedBlur(countdown, blurriness, delay) {
 }
 
 
-function displayTextInCenter(string, size) {
-  textAlign(CENTER);
+function displayTextInCenter(string, size=width/8) {
+  textAlign(CENTER, CENTER);
   textSize(size);
 
   for (let textNumber = 0; textNumber < textColorGradients.length; textNumber++) {
@@ -283,8 +301,8 @@ function newBlock() {
   clearRow();
   rotationState = 0;
   hasBeenSwapped = false;
-  fallingTetrisColor = Math.floor(Math.random() * (tetrisColorPallet.length - 1)) + 1;
   randomFallingTetris = Math.floor(Math.random() * 7);
+  fallingTetrisColor = randomFallingTetris + 1;
 
   fallingTetrisCoordinate = [4, 0];
   updateTetrisFrame();
@@ -380,8 +398,19 @@ function rotateTetris() {
     }
     updateTetrisFrame();
   }
+}
 
 
+function rotateTetrisOtherWay() {
+  if (canRotate()) {
+    if (rotationState < 1) {
+      rotationState = 3;
+    }
+    else {
+      rotationState--;
+    }
+    updateTetrisFrame();
+  }
 }
 
 
@@ -459,7 +488,7 @@ function swapBlocks() {
 
 
 function setColorPallet() {
-  tetrisColorPallet = [color(60, 60, 60), color(3, 65, 174), color(114, 203, 59), color(255, 213, 0), color(255, 151, 28), color(255, 50, 19)];
+  tetrisColorPallet = [color(60, 60, 60), color(240,240,0), color(240,160,0), color(0,0,240), color(0,240,240), color(240,0,0), color(144,0,216), color(0,240,0)];
   for (let theColor of tetrisColorPallet) {
     tetrisShadowColorPallet.push(lerpColor(tetrisColorPallet[0], theColor, SHADOW_FADE));
   }
@@ -548,8 +577,7 @@ function showScore() {
 function checkGameLoss() {
   for (let block of allFallingBlocks[randomFallingTetris][rotationState]) {
     if (tetrisArray[block[1] + fallingTetrisCoordinate[1]][block[0] + fallingTetrisCoordinate[0]].solid) {
-      gameIsOver = true;
-      location.reload();
+      gameState = "lost";
     }
   }
 }
